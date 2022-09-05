@@ -1,9 +1,3 @@
-from mcpi.minecraft import Minecraft
-from mcpi.minecraft import Block
-import random
-from building import Building
-
-
 # border_size determines the size of the border, a border_size of 10 gives a 10x10 fence
 def draw_border(mc, border_size):
     player_x, player_y, player_z = mc.player.getTilePos()
