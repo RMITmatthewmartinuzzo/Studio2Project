@@ -7,6 +7,10 @@ from random import randint
 class Building:
     # building input is going to be two co-ordinates
     # building should store one co-ordinate (location of front door)
+    NUMBER_OF_FLOORS = randint(1, 3)
+    FLOOR_HEIGHT = randint(3, 5)
+    door_location = ()
+    MIN_AREA = randint(9, 16)
 
     def __init__(self, x1, x2, z1, z2, height, mc):
         self.mc = mc
@@ -21,11 +25,57 @@ class Building:
         self.build()
 
     def build(self):
-        pass
+        width = abs(self.x2 - self.x1)
+        length = abs(self.z2 - self.z1)
+        
+        # make sure the floor is flat (it should already be)
+        self.mc.setBlocks(self.x1, self.height, self.z1, self.x2, self.height + self.NUMBER_OF_FLOORS * self.FLOOR_HEIGHT, self.z2, Block(0))
+        
+        for i in range(self.NUMBER_OF_FLOORS):
+            # build the floor
+            self.mc.setBlocks(self.x1, self.height + i * self.FLOOR_HEIGHT, self.z1, self.x2, self.height + i * self.FLOOR_HEIGHT, self.z2, Block(5))
+            # build the walls
+            for h in range(self.FLOOR_HEIGHT):
+                for x in range(width + 1):
+                    self.mc.setBlock(self.x1 + x, self.height + i * self.FLOOR_HEIGHT + h, self.z1, Block(1))
+                    self.mc.setBlock(self.x1 + x, self.height + i * self.FLOOR_HEIGHT + h, self.z2, Block(1))
+                for z in range(1, length):
+                    self.mc.setBlock(self.x1, self.height + i * self.FLOOR_HEIGHT + h, self.z1 + z, Block(1))
+                    self.mc.setBlock(self.x2, self.height + i * self.FLOOR_HEIGHT + h, self.z1 + z, Block(1))
+            self.recurssive_build(self.x1, self.x2, self.z1, self.z2, self.height + i * self.FLOOR_HEIGHT, True)
     
-    
-    def recurssive_build(self, x1, x2, z1, z2, height):
-        pass
+    def recurssive_build(self, x1, x2, z1, z2, floorHeight, direction):
+        width = abs(x2 - x1)
+        length = abs(z2 - z1)
+        height = floorHeight + 1
+        area = width * length
+
+        if area < self.MIN_AREA or width < 3 or length < 3:
+            return
+        else:
+            # split vertical
+            if direction:
+                direction = not direction
+                # split building along x axis
+                split = randint(3, width - 3)
+                # build split wall
+                for h in range(self.FLOOR_HEIGHT):
+                    for z in range(1, length):
+                        self.mc.setBlock(x1 + split, floorHeight + h, z1 + z, Block(1))
+                self.recurssive_build(x1, x1 + split, z1, z2, floorHeight, direction)
+                self.recurssive_build(x1 + split, x2, z1, z2, floorHeight, direction)
+            # split horizontal
+            else:
+                direction = not direction
+                # split building along x axis
+                split = randint(3, length - 3)
+                # build split wall
+                for h in range(self.FLOOR_HEIGHT):
+                    for x in range(1, width):
+                        self.mc.setBlock(x1 + x, floorHeight + h, z1 + split, Block(1))
+                self.recurssive_build(x1, x2, z1, z1 + split, floorHeight, direction)
+                self.recurssive_build(x1, x2, z1 + split, z2, floorHeight, direction)
+            
         
 
         # # recursive function to split rooms into smaller rooms
