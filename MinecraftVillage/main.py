@@ -10,5 +10,3 @@ if __name__ == "__main__":
     player_pos = mc.player.getTilePos()
 
     # fountain = decoration.Fountain(mc, *player_pos)
-    village.draw_border(mc, *player_pos, 2)
-
