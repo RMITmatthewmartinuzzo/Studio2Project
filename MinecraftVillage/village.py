@@ -1,7 +1,6 @@
 # border_size determines the size of the border, a border_size of 10 gives a 10x10 fence
 def draw_border(mc, border_size):
     player_x, player_y, player_z = mc.player.getTilePos()
-    border_size = 10
     border_width = player_z + border_size
     border_depth = player_x + border_size
     for x in range(player_x, border_depth):
