@@ -1,7 +1,6 @@
 from mcpi.minecraft import Minecraft
 from building import Building
-from village import Village
-from decoration import Torch
+import village
 
 if __name__ == "__main__":
     # create minecraft connection
@@ -9,6 +8,6 @@ if __name__ == "__main__":
 
     starting_position = mc.player.getTilePos()
 
-    # village = Village(starting_position)
+    village.create_village(mc, 10)
 
-    building = Building(starting_position, "pos x", mc)
+    # building = Building(starting_position, "pos x", mc)
