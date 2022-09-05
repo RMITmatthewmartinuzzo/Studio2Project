@@ -7,4 +7,4 @@ from building import Building
 def create_torch(location):
     mc = Minecraft.create()
     mc.setBlock(location, 1)
-
+    # test
