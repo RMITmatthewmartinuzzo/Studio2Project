@@ -3,69 +3,74 @@ from mcpi.minecraft import Block
 from mcpi.minecraft import Vec3
 from random import randint
 
-class Building():
-    #startingLocation is a tuple of x, y, z
-    #direction is either pos/neg x/z
-    #mCon is minecraft connection
-    def __init__(self, startingLocation, direction, mCon):
-        self.mCon = mCon
-        
+
+class Building:
+    # starting_location is a tuple of x, y, z
+    # direction is either pos/neg x/z
+    # mc is minecraft connection
+    def __init__(self, starting_location, direction, mc):
+        self.mc = mc
+
         # self.map = []
-        self.startingLocation = startingLocation
+        self.startingLocation = starting_location
         self.direction = direction
-        self.height = mCon.getHeight(startingLocation.x, startingLocation.z)
-        
-        #build Building
+        self.height = mc.getHeight(starting_location.x, starting_location.z)
+
+        # build Building
         self.build()
-    
+
     def build(self):
-        #recursive function to split rooms into smaller rooms
-        def buildRooms(buildingWidth, buildingLength, roomHeight, startingLocation):
-            
+        # recursive function to split rooms into smaller rooms
+        def build_rooms(building_width, building_length, room_height, starting_location):
+
             # blockDoor = Block(64)
-            # self.mCon.setBlock(startingLocation.x + 1, startingLocation.y, startingLocation.z, blockDoor)
-            # self.mCon.setBlock(startingLocation.x + 1, startingLocation.y + 1, startingLocation.z, blockDoor)
-            
-            area = buildingWidth * buildingLength
-            areaRandomizer = randint(0, 100)
-            #splitting stops upon an area of 9 or less, or if the randomizer is less than 10
-            if area <= 9 or areaRandomizer < 10:
+            # self.mc.setBlock(starting_location.x + 1, starting_location.y, starting_location.z, blockDoor)
+            # self.mc.setBlock(starting_location.x + 1, starting_location.y + 1, starting_location.z, blockDoor)
+
+            area = building_width * building_length
+            area_randomizer = randint(0, 100)
+            # splitting stops upon an area of 9 or less, or if the randomizer is less than 10
+            if area <= 9 or area_randomizer < 10:
                 return
-            #choose either room to be divided in x or y direction
+            # choose either room to be divided in x or y direction
             direction = 1
-            #this is in the x direction
+            # this is in the x direction
             if direction == 1:
-                #choose a random point to split the room
-                split = randint(1, buildingWidth - 1)
-                blockObj = Block(1, 0)
-                for y in range(roomHeight):
-                    for z in range(1, buildingLength - 1):
-                        self.mCon.setBlock(startingLocation.x + split, startingLocation.y + y, startingLocation.z + z, blockObj)
-                leftLocation = Vec3(startingLocation.x + 1, startingLocation.y, startingLocation.z)
-                rightLocation = Vec3(startingLocation.x + split + 1, startingLocation.y, startingLocation.z)
-                
-                buildRooms(split, buildingLength, roomHeight, leftLocation)
-                buildRooms(buildingWidth - split, buildingLength, roomHeight, rightLocation)
-            #else do it in the z direction
+                # choose a random point to split the room
+                split = randint(1, building_width - 1)
+                block_obj = Block(1, 0)
+                for y in range(room_height):
+                    for z in range(1, building_length - 1):
+                        self.mc.setBlock(starting_location.x + split, starting_location.y + y,
+                                            starting_location.z + z, block_obj)
+                left_location = Vec3(starting_location.x + 1, starting_location.y, starting_location.z)
+                right_location = Vec3(starting_location.x + split + 1, starting_location.y, starting_location.z)
+
+                build_rooms(split, building_length, room_height, left_location)
+                build_rooms(building_width - split, building_length, room_height, right_location)
+            # else do it in the z direction
             else:
                 pass
-        
-        
-        #width is in the x direction, length is in the z direction
-        buildingWidth, buildingLength, roomHeight = randint(50, 55), randint(50, 55), randint(3, 5)
-        # do i want a map of my building? lets start with no map...
-        print(buildingLength, buildingWidth)
-        #build to the roof
-        for y in range(roomHeight):
-            #build front and back walls
-            blockObj = Block(1, 0)
-            for x in range(buildingWidth):
-                self.mCon.setBlock(self.startingLocation.x + x, self.startingLocation.y + y, self.startingLocation.z, blockObj)
-                self.mCon.setBlock(self.startingLocation.x + x, self.startingLocation.y + y, self.startingLocation.z + buildingLength - 1, blockObj)
-            
-            #build side walls    
-            for z in range(1, buildingLength - 1):
-                self.mCon.setBlock(self.startingLocation.x, self.startingLocation.y + y, self.startingLocation.z + z, blockObj)
-                self.mCon.setBlock(self.startingLocation.x + buildingWidth - 1, self.startingLocation.y + y, self.startingLocation.z + z, blockObj)
 
-        buildRooms(buildingWidth, buildingLength, roomHeight, self.startingLocation)
+        # width is in the x direction, length is in the z direction
+        building_width, building_length, room_height = randint(50, 55), randint(50, 55), randint(3, 5)
+        # do I want a map of my building? let's start with no map...
+        print(building_length, building_width)
+        # build to the roof
+        for y in range(room_height):
+            # build front and back walls
+            block_obj = Block(1, 0)
+            for x in range(building_width):
+                self.mc.setBlock(self.startingLocation.x + x, self.startingLocation.y + y, self.startingLocation.z,
+                                    block_obj)
+                self.mc.setBlock(self.startingLocation.x + x, self.startingLocation.y + y,
+                                    self.startingLocation.z + building_length - 1, block_obj)
+
+            # build side walls
+            for z in range(1, building_length - 1):
+                self.mc.setBlock(self.startingLocation.x, self.startingLocation.y + y, self.startingLocation.z + z,
+                                    block_obj)
+                self.mc.setBlock(self.startingLocation.x + building_width - 1, self.startingLocation.y + y,
+                                    self.startingLocation.z + z, block_obj)
+
+        build_rooms(building_width, building_length, room_height, self.startingLocation)
